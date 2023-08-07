@@ -1,6 +1,5 @@
 import json
 import os
-import tqdm
 import requests
 
 from loguru import logger
@@ -22,23 +21,20 @@ class Downloader:
     def _download(self, url: str, name: str) -> str:
         filepath = f"./{config['dist_dir']}/{name}"
 
-        # Check if the tool exists
+        # Check if the file already exists
         if os.path.exists(filepath):
             logger.warning(f"{filepath} already exists, skipping")
             return filepath
 
         with self.client.get(url, stream=True) as res:
             res.raise_for_status()
-            total_size = int(res.headers.get("content-length", 0))
-        
-            with open(filepath, "wb") as file, tqdm.tqdm(
-                total=total_size, unit="B", unit_scale=True, unit_divisor=1024
-            ) as progress_bar:
+         
+            with open(filepath, "wb") as file:
                 for chunk in res.iter_content(chunk_size=8192):
                     file.write(chunk)
-                    progress_bar.update(len(chunk))
 
         logger.success(f"{filepath} downloaded")
+        logger.info(f"Download link: {url}")
 
         return filepath
 
