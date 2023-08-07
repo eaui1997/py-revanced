@@ -40,32 +40,40 @@ class Downloader:
         logger.info("Downloading required resources")
 
         # Build the API urls
-        repositories = [
-            "revanced/revanced-cli",
-            "revanced/revanced-patches",
-            "revanced/revanced-integrations",
+        users = [
+            "j-hc"
+            "revanced",
+            "revanced",
         ]
+        repositories = [
+            "revanced-cli",
+            "revanced-patches",
+            "revanced-integrations",
+        ]
+    
         api_urls = [
-            f"https://api.github.com/repos/{repo}/releases/latest"
-            for repo in repositories
+            f"https://api.github.com/repos/{user}/{repo}/releases/latest"
+            for user, repo in zip(users, repositories)
         ]
 
         downloaded_files = {}
 
-        for api_url, repo in zip(api_urls, repositories):
+        for api_url, user_repo in zip(api_urls, zip(users, repositories)):
             try:
                 response = self.client.get(api_url)
                 response.raise_for_status()
 
                 tools = response.json()
-
+            
+                user, repo = user_repo
+            
                 for tool in tools.get("assets", []):
                     filepath = self._download(tool["browser_download_url"], tool["name"])
-                    name = repo.replace("revanced/", "")
+                    name = repo.replace("user/", "")
                     downloaded_files[name] = filepath
 
             except requests.exceptions.HTTPError as err:
-                logger.error(f"Error downloading resources for {repo}: {err}")
+                logger.error(f"Error downloading resources for {user}/{repo}: {err}")
                 continue
 
         return downloaded_files
