@@ -8,6 +8,7 @@ from src.build import Build
 app_names = ["youtube"]
 exclude_patches = [""]
 include_patches = [""]
+rip_libs =["x86,x86_64,armeabi-v7a"]
 
 # Define the repositories to check
 repo1 = os.environ["GITHUB_REPOSITORY"]
