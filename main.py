@@ -1,3 +1,4 @@
+
 import argparse
 import datetime
 import os
@@ -8,23 +9,21 @@ from src.build import Build
 app_names = ["youtube"]
 exclude_patches = [""]
 include_patches = [""]
-rip_libs =["x86,x86_64,armeabi-v7a"]
 
 # Define the repositories to check
 repo1 = os.environ["GITHUB_REPOSITORY"]
 repo2 = "revanced/revanced-patches"
 
-# Define the time threshold for assets in hours
-time_threshold = 24
+# Define the time threshold for assets in days
+time_threshold = 1
 
 for i in range(len(app_names)):
   
     app_name = app_names[i]
     exclude_patch = exclude_patches[i]
     include_patch = include_patches[i]
-    rip_lib = rip_libs[i]
 
-    args = argparse.Namespace(app_name=app_name, exclude_patches=exclude_patch, include_patches=include_patch, rip_libs=rip_lib)
+    args = argparse.Namespace(app_name=app_name, exclude_patches=exclude_patch, include_patches=include_patch)
 
     # Check the release status of repo1
     response1 = requests.head(f"https://api.github.com/repos/{repo1}/releases/latest")
@@ -47,18 +46,19 @@ for i in range(len(app_names)):
                 published_time = datetime.datetime.strptime(published_at, "%Y-%m-%dT%H:%M:%SZ")
                 # Get the current time in UTC
                 current_time = datetime.datetime.utcnow()
-                # Calculate the difference in hours
-                difference = (current_time - published_time).total_seconds() / 3600
+                # Calculate the difference in days
+                difference = (current_time - published_time).days
                 if difference <= time_threshold:
                     # The asset is published within the time threshold, build the app
                     build = Build(args)
                     build.run_build()
                 else:
                     # The asset is too old, skip the app
-                    print(f"Skipping patch {app_name} because the asset of {repo2} is older than {time_threshold} hour(s)")
+                    print(f"Skipping patch {app_name} because the asset of {repo2} is older than {time_threshold} day(s)")
             else:
                 # There are no assets, skip the app
                 print(f"Skipping patch {app_name} because there are no assets in {repo2}")
         else:
             # There is no latest release, skip the app
             print(f"Skipping patch {app_name} because there is available latest release in {repo1}")
+          
