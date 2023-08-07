@@ -1,4 +1,3 @@
-
 import argparse
 import datetime
 import os
@@ -14,8 +13,8 @@ include_patches = [""]
 repo1 = os.environ["GITHUB_REPOSITORY"]
 repo2 = "revanced/revanced-patches"
 
-# Define the time threshold for assets in days
-time_threshold = 1
+# Define the time threshold for assets in hours
+time_threshold = 24
 
 for i in range(len(app_names)):
   
@@ -46,19 +45,18 @@ for i in range(len(app_names)):
                 published_time = datetime.datetime.strptime(published_at, "%Y-%m-%dT%H:%M:%SZ")
                 # Get the current time in UTC
                 current_time = datetime.datetime.utcnow()
-                # Calculate the difference in days
-                difference = (current_time - published_time).days
+                # Calculate the difference in hours
+                difference = (current_time - published_time).total_hours()
                 if difference <= time_threshold:
                     # The asset is published within the time threshold, build the app
                     build = Build(args)
                     build.run_build()
                 else:
                     # The asset is too old, skip the app
-                    print(f"Skipping patch {app_name} because the asset of {repo2} is older than {time_threshold} day(s)")
+                    print(f"Skipping patch {app_name} because the asset of {repo2} is older than {time_threshold} hour(s)")
             else:
                 # There are no assets, skip the app
                 print(f"Skipping patch {app_name} because there are no assets in {repo2}")
         else:
             # There is no latest release, skip the app
             print(f"Skipping patch {app_name} because there is available latest release in {repo1}")
-          
