@@ -33,7 +33,7 @@ class APKmirror:
 
         return "https://www.apkmirror.com" + sub_url
 
-    def extract_download_link(self, page: str) -> None:
+    def extract_download_link(self, page: str) -> str:
         parser = LexborHTMLParser(self.client.get(page).text)
 
         resp = self.client.get(
