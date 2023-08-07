@@ -50,15 +50,20 @@ class Downloader:
             "revanced-patches",
             "revanced-integrations",
         ]
+        tags = [
+            "latest",
+            "latest",
+            "latest",
+        ]
     
         api_urls = [
-            f"https://api.github.com/repos/{user}/{repo}/releases/latest"
-            for user, repo in zip(users, repositories)
+            f"https://api.github.com/repos/{user}/{repo}/releases/{tag}"
+            for user, repo, tag in zip(users, repositories, tags)
         ]
 
         downloaded_files = {}
 
-        for api_url, user_repo in zip(api_urls, zip(users, repositories)):
+        for api_url, user_repo, tag in zip(api_urls, zip(users, repositories), tags):
             try:
                 response = self.client.get(api_url)
                 response.raise_for_status()
