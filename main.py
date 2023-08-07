@@ -22,8 +22,9 @@ for i in range(len(app_names)):
     app_name = app_names[i]
     exclude_patch = exclude_patches[i]
     include_patch = include_patches[i]
+    rip_lib = rip_libs[i]
 
-    args = argparse.Namespace(app_name=app_name, exclude_patches=exclude_patch, include_patches=include_patch)
+    args = argparse.Namespace(app_name=app_name, exclude_patches=exclude_patch, include_patches=include_patch, rip_libs=rip_lib)
 
     # Check the release status of repo1
     response1 = requests.head(f"https://api.github.com/repos/{repo1}/releases/latest")
