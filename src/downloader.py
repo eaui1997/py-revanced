@@ -1,7 +1,8 @@
 import json
 import os
-
+import tqdm
 import requests
+
 from loguru import logger
 
 from src._config import app_reference, config
@@ -28,9 +29,14 @@ class Downloader:
 
         with self.client.get(url, stream=True) as res:
             res.raise_for_status()
-            with open(filepath, "wb") as file:
+            total_size = int(res.headers.get("content-length", 0))
+        
+            with open(filepath, "wb") as file, tqdm.tqdm(
+                total=total_size, unit="B", unit_scale=True, unit_divisor=1024
+            ) as progress_bar:
                 for chunk in res.iter_content(chunk_size=8192):
                     file.write(chunk)
+                    progress_bar.update(len(chunk))
 
         logger.success(f"{filepath} downloaded")
 
