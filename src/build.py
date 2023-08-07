@@ -64,7 +64,7 @@ class Build(object):
                 self.download_files["revanced-integrations"],
                 "--keystore",
                 config["keystore_path"],
-                *rip_libs
+                *rip_libs,
                 *exclude_patches,
                 *include_patches,
             ]
