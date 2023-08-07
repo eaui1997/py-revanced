@@ -57,6 +57,12 @@ class Build(object):
                 self.download_files["revanced-integrations"],
                 "--keystore",
                 config["keystore_path"],
+                "--rip-lib",
+                "x86",
+                "--rip-lib",
+                "x86_64",
+                "--rip-lib",
+                "armeabi-v7a",
                 *exclude_patches,
                 *include_patches,
             ]
