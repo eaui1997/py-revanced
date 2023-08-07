@@ -1,7 +1,7 @@
 import json
 import os
-
 import requests
+
 from loguru import logger
 
 from src._config import app_reference, config
@@ -21,18 +21,20 @@ class Downloader:
     def _download(self, url: str, name: str) -> str:
         filepath = f"./{config['dist_dir']}/{name}"
 
-        # Check if the tool exists
+        # Check if the file already exists
         if os.path.exists(filepath):
             logger.warning(f"{filepath} already exists, skipping")
             return filepath
 
         with self.client.get(url, stream=True) as res:
             res.raise_for_status()
+         
             with open(filepath, "wb") as file:
                 for chunk in res.iter_content(chunk_size=8192):
                     file.write(chunk)
 
         logger.success(f"{filepath} downloaded")
+        logger.info(f"Download link: {url}")
 
         return filepath
 
