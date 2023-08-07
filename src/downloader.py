@@ -41,7 +41,7 @@ class Downloader:
 
         # Build the API urls
         users = [
-            "j-hc"
+            "j-hc",
             "revanced",
             "revanced",
         ]
