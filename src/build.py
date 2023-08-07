@@ -20,6 +20,7 @@ class Build(object):
         self.download_files = Downloader().download_required()
         self.exclude_patches: str | None = self.args.exclude_patches
         self.include_patches: str | None = self.args.include_patches
+        self.rip_libs: str | None = self.args.rip_libs
 
 
     def run_build(self):
@@ -41,6 +42,12 @@ class Build(object):
             [],
         )
 
+        # x86,x86_64
+        rip_lips = sum(
+            [["--rip-lib", s.strip()] for s in self.args.rip_libs.split(",")],
+            [],
+        )
+
         # Run the build command
         process = subprocess.Popen(
             [
@@ -57,12 +64,7 @@ class Build(object):
                 self.download_files["revanced-integrations"],
                 "--keystore",
                 config["keystore_path"],
-                "--rip-lib",
-                "x86",
-                "--rip-lib",
-                "x86_64",
-                "--rip-lib",
-                "armeabi-v7a",
+                *rip_libs
                 *exclude_patches,
                 *include_patches,
             ]
