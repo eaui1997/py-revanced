@@ -46,7 +46,7 @@ for i in range(len(app_names)):
                 # Get the current time in UTC
                 current_time = datetime.datetime.utcnow()
                 # Calculate the difference in hours
-                difference = (current_time - published_time).total_hours()
+                difference = (current_time - published_time).total_seconds() / 3600
                 if difference <= time_threshold:
                     # The asset is published within the time threshold, build the app
                     build = Build(args)
