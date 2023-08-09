@@ -1,9 +1,6 @@
-import json
-import os
 import requests
-from loguru import logger
-from src._config import app_reference, config
-from src.downloader import Downloader
+from selectolax.lexbor import LexborHTMLParser
+
 
 class APKmirror:
     def __init__(self):
