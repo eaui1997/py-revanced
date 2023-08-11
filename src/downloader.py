@@ -15,6 +15,12 @@ class Downloader:
                 + " Gecko/20100101 Firefox/112.0"
             }
         )
+        self.base_url = "https://api.github.com/repos"
+        self.repositories = [
+            {"user": "j-hc", "repo": "revanced-cli", "tag": "latest"},
+            {"user": "revanced", "repo": "revanced-patches", "tag": "latest"},
+            {"user": "revanced", "repo": "revanced-integrations", "tag": "latest"}
+        ]
 
     def _download(self, url: str, name: str) -> str:
         filepath = f"./{config['dist_dir']}/{name}"
@@ -38,37 +44,25 @@ class Downloader:
 
     def download_required(self):
         logger.info("Downloading required resources")
-
-        # Build the API urls
-        user_repo_tag = [
-            ("j-hc", "revanced-cli", "latest"),
-            ("revanced", "revanced-patches", "latest"),
-            ("revanced", "revanced-integrations", "latest"),
-        ]
-        users, repositories, tags = zip(*user_repo_tag)
-        api_urls = [
-            f"https://api.github.com/repos/{user}/{repo}/releases/{tag}"
-            for user, repo, tag in user_repo_tag
-        ]
-
         downloaded_files = {}
 
-        for i, api_url in enumerate(api_urls):
+        for repository in self.repositories:
             try:
+                api_url = f"{self.base_url}/{repository['user']}/{repository['repo']}/releases/{repository['tag']}"
                 response = self.client.get(api_url)
                 response.raise_for_status()
 
-                tools = response.json().get("assets", [])
-        
-                user, repo, tag = user_repo_tag[i]
-        
-                for tool in tools:
-                    filepath = self._download(tool["browser_download_url"], tool["name"])
-                    name = repo.replace("user/", "")
+                assets = response.json().get("assets", [])
+
+                for asset in assets:
+                    filename = asset["name"]
+                    download_url = asset["browser_download_url"]
+                    filepath = self._download(download_url, filename)
+                    name = repository['repo'].replace("user/", "")
                     downloaded_files[name] = filepath
 
             except requests.exceptions.HTTPError as err:
-                logger.error(f"Error downloading resources for {user}/{repo}: {err}")
+                logger.error(f"Error downloading resources for {repository['user']}/{repository['repo']}: {err}")
                 continue
 
         return downloaded_files            
