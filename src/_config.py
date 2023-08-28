@@ -1,5 +1,5 @@
 config = {
-    "dist_dir": "revanced-dist",
+    "dist_dir": "build",
     "keystore_path": "./keystore/default.keystore",
 }
 
