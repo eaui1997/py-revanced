@@ -47,25 +47,24 @@ class Build(object):
                 "java",
                 "-jar",
                 self.download_files["revanced-cli"],
-                "patch",
-                "--patch-bundle",
+                "--bundle",
                 self.download_files["revanced-patches"],
-                #"--apk",
+                "--apk",
                 input_apk_filepath,
                 "--out",
-                f"{target_app}-revanced.apk",
+                f"./{config['dist_dir']}/{target_app}-revanced.apk",
                 "--merge",
                 self.download_files["revanced-integrations"],
-                #"--keystore",
-                #config["keystore_path"],
-                #"--rip-lib",
-                #"x86",
-                #"--rip-lib",
-                #"x86_64",
-                #"--rip-lib",
-                #"armeabi-v7a",
-                #*exclude_patches,
-                #*include_patches,
+                "--keystore",
+                config["keystore_path"],
+                "--rip-lib",
+                "x86",
+                "--rip-lib",
+                "x86_64",
+                "--rip-lib",
+                "armeabi-v7a",
+                *exclude_patches,
+                *include_patches,
             ]
             + sum(
                 [
@@ -87,7 +86,7 @@ class Build(object):
             logger.error("An error occurred while running the Java program")
             sys.exit(1)
 
-        output_path = f"{target_app}-revanced_signed.apk"
+        output_path = f"./revanced-cache/{target_app}-revanced_signed.apk"
 
         # Check if the output file exists
         if not os.path.exists(output_path):
