@@ -49,7 +49,7 @@ class Build(object):
                 self.download_files["revanced-cli"],
                 "patch"
                 ""
-                "--patche-bundles",
+                "--patch-bundle",
                 self.download_files["revanced-patches"],
                 #"--apk",
                 input_apk_filepath,
