@@ -53,7 +53,7 @@ class Build(object):
                 #"--apk",
                 input_apk_filepath,
                 "--out",
-                f"./{config['dist_dir']}/{target_app}-revanced.apk",
+                f"{target_app}-revanced.apk",
                 "--merge",
                 self.download_files["revanced-integrations"],
                 #"--keystore",
@@ -87,7 +87,7 @@ class Build(object):
             logger.error("An error occurred while running the Java program")
             sys.exit(1)
 
-        output_path = f"./revanced-cache/{target_app}-revanced_signed.apk"
+        output_path = f"{target_app}-revanced_signed.apk"
 
         # Check if the output file exists
         if not os.path.exists(output_path):
