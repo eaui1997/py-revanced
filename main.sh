@@ -1,56 +1,54 @@
-import argparse
-import datetime
-import os
-import requests
+#!/bin/bash
+source utils.sh
 
-from src.build import Build
+repo1="$GITHUB_REPOSITORY"
+repo2="revanced/revanced-patches"
+time_threshold=24
 
-app_name = "youtube"
-exclude_patches = ""
-include_patches = ""
-
-# Define the repositories to check
-repo1 = os.environ["GITHUB_REPOSITORY"]
-repo2 = "revanced/revanced-patches"
-
-# Define the time threshold for assets in hours
-time_threshold = 24
-
-args = argparse.Namespace(app_name=app_name, exclude_patches=exclude_patches, include_patches=include_patches)
+current_time=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
 # Check the release status of repo1
-response1 = requests.head(f"https://api.github.com/repos/{repo1}/releases/latest")
-if response1.status_code == 404:
+response1=$(curl -s -o /dev/null -w "%{http_code}" "https://api.github.com/repos/$repo1/releases/latest")
+if [[ $response1 -eq 404 ]]; then
     # No latest release, build the app
-    build = Build(args)
-    build.run_build()
-else:
+    dl_gh
+    get_version
+    dl_yt $version youtube-v$version.apk
+    patch_ytrv
+else
     # There is a latest release, check the release status of repo2
-    response2 = requests.get(f"https://api.github.com/repos/{repo2}/releases/latest")
-    if response2.status_code == 200:
+    response2=$(curl -s -o /dev/null -w "%{http_code}" "https://api.github.com/repos/$repo2/releases/latest")
+    if [[ $response2 -eq 200 ]]; then
         # There is a latest release, get the published time of the assets
-        data2 = response2.json()
-        assets = data2["assets"]
-        if assets:
+        assets=$(curl -s "https://api.github.com/repos/$repo2/releases/latest" | jq -r '.assets')
+
+        if [[ $assets ]]; then
             # There are assets, get the first one
-            asset = assets[0]
-            published_at = asset["updated_at"]
+            asset=$(echo "$assets" | jq -r '.[0]')
+            published_at=$(echo "$asset" | jq -r '.updated_at')
+
             # Convert the published time to datetime object
-            published_time = datetime.datetime.strptime(published_at, "%Y-%m-%dT%H:%M:%SZ")
-            # Get the current time in UTC
-            current_time = datetime.datetime.utcnow()
+            published_time=$(date -u -d "$published_at" +"%Y-%m-%dT%H:%M:%SZ")
+
             # Calculate the difference in hours
-            difference = (current_time - published_time).total_seconds() / 3600
-            if difference <= time_threshold:
+            difference=$(( ($(date -u -d "$current_time" +"%s") - $(date -u -d "$published_time" +"%s")) / 3600 ))
+
+            if [[ $difference -le $time_threshold ]]; then
                 # The asset is published within the time threshold, build the app
-                build = Build(args)
-                build.run_build()
-            else:
+                dl_gh
+                get_version
+                dl_yt $version youtube-v$version.apk
+                patch_ytrv
+            else
                 # The asset is too old, skip the app
-                print(f"Skipping patch {app_name} because the asset of {repo2} is older than {time_threshold} hour(s)")
-        else:
+                echo "Skipping patch YouTube because the asset of $repo2 is older than $time_threshold hour(s)"
+            fi
+        else
             # There are no assets, skip the app
-            print(f"Skipping patch {app_name} because there are no assets in {repo2}")
-    else:
+            echo "Skipping patch YouTube because there are no assets in $repo2"
+        fi
+    else
         # There is no latest release, skip the app
-        print(f"Skipping patch {app_name} because there is available latest release in {repo1}")
+        echo "Skipping patch YouTube because there is no available latest release in $repo1"
+    fi
+fi
