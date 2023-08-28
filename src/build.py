@@ -55,7 +55,6 @@ class Build(object):
                 "--merge",
                 self.download_files["revanced-integrations"],
                 "--keystore",
-                "--force",
                 config["keystore_path"],
                 *exclude_patches,
                 *include_patches,
