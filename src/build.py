@@ -64,8 +64,8 @@ class Build(object):
                 #"x86_64",
                 #"--rip-lib",
                 #"armeabi-v7a",
-                *exclude_patches,
-                *include_patches,
+                #*exclude_patches,
+                #*include_patches,
             ]
             + sum(
                 [
