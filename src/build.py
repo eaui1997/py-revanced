@@ -47,7 +47,7 @@ class Build(object):
                 "java",
                 "-jar",
                 self.download_files["revanced-cli"],
-                "--bundle",
+                "--patch-bundle",
                 self.download_files["revanced-patches"],
                 "--apk",
                 input_apk_filepath,
