@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Download necessary resources 
 dl_gh() {
     for repo in revanced-patches revanced-cli revanced-integrations ; do
     asset_urls=$(wget -qO- "https://api.github.com/repos/revanced/$repo/releases/latest" | jq -r '.assets[] | "\(.browser_download_url) \(.name)"')
@@ -29,12 +28,10 @@ dl_yt() {
     req "$url" "$2"
     if [ ! -f $2 ]; then echo failed && exit 1; fi
 }
-# Take supported version
+
 get_version() {
-    compatible_packages=$(jq -r '.[].compatiblePackages[] | select(.name == "com.google.android.youtube")' patches.json )
-    if [[ ! -z "$compatible_packages" ]]; then
-        version=$(echo "$compatible_packages" | jq -r '.versions[] | select(. | test("^\\d+\\.\\d+\\.\\d+$"))' | sort -r | head -n 1)
-    fi
+    version=$(jq -r '.[].compatiblePackages[] | select(.name == "com.google.android.youtube") 
+    | .versions[] | select(test("^\\d+\\.\\d+\\.\\d+$"))' patches.json | sort -r | head -n 1)
 }
 
 # Function Patch APK
