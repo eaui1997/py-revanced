@@ -41,7 +41,7 @@ class Build(object):
                 "-b",
                 self.download_files["revanced-patches"],
                 "-o",
-                f"{target_app}-revanced-v{version}.apk",
+                f"{target_app}-revanced.apk",
                 "-m",
                 self.download_files["revanced-integrations"],
                 "--keystore",
