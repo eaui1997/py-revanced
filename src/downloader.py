@@ -68,7 +68,6 @@ class Downloader:
         return downloaded_files            
 
     def download_apk(self, app_name: str):
-        global version
         # Load from patches.json
         with open(f"./{config['dist_dir']}/patches.json", "r") as patches_file:
             patches = json.load(patches_file)
