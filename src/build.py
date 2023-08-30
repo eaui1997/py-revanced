@@ -63,3 +63,14 @@ class Build(object):
             sys.exit(1)
     
         logger.success(f"Build completed successfully")
+
+    def check_java_version(self):
+        version = subprocess.check_output(
+            ["java", "-version"], stderr=subprocess.STDOUT
+        ).decode("utf-8")
+        
+        if "17" not in version:
+            logger.error("Java 17 is required to run the build.")
+            exit(1)
+        
+        logger.success("Java 17 is installed")
