@@ -46,7 +46,6 @@ class Build(object):
                 self.download_files["revanced-integrations"],
                 "--keystore",
                 config["keystore_path"],
-                "--force",
                 *exclude_patches,
                 *include_patches,
                 input_apk_filepath,
