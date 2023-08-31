@@ -17,7 +17,7 @@ class Downloader:
         )
         self.base_url = "https://api.github.com/repos"
         self.repositories = [
-            {"user": "revanced", "repo": "revanced-cli", "tag": "latest"},
+            {"user": "j-hc", "repo": "revanced-cli", "tag": "latest"},
             {"user": "revanced", "repo": "revanced-patches", "tag": "latest"},
             {"user": "revanced", "repo": "revanced-integrations", "tag": "latest"}
         ]
