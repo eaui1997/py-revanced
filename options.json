@@ -2,7 +2,7 @@
   "patchName" : "Change package name",
   "options" : [ {
     "key" : "packageName",
-    "value" : null
+    "value" : "legend.youtube.android"
   } ]
 }, {
   "patchName" : "Custom branding",
